@@ -2,27 +2,26 @@ package org.teamlogging.log4j2test;
 
 import org.apache.logging.log4j.*;
 
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 public class LoggingTest {
 
     private static final Logger logger = LogManager.getLogger(LoggingTest.class);
 
-    private static final Marker BUSINESS_MARKER = MarkerManager.getMarker("BUS_LOG");
+    private static final int THREADS_COUNT = 8;
+
+    private static final int ITERATIONS_COUNT = 100_000;
 
     public static void main(String[] args) {
-        Thread.currentThread().setName("Main Logging Thread");
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 8, 0L, TimeUnit.MINUTES, new SynchronousQueue());
 
-        ThreadContext.put("loginId", "userName.testName");
+        for (int i = 0; i < THREADS_COUNT; i++) {
+            LoggingThread loggingThread = new LoggingThread(ITERATIONS_COUNT, "ThreadName_" + i, "login_" + i);
 
-        for (int i = 0; i < 100; i++) {
-            logInfo();
+            executor.execute(loggingThread);
         }
-        generateErrorLevel0();
-
-        ThreadContext.clearAll();
-    }
-
-    private static void logInfo() {
-        logger.info(BUSINESS_MARKER,"Test logging info");
     }
 
     private static final void generateErrorLevel0() {
