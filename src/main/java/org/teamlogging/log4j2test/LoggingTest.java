@@ -94,7 +94,7 @@ public class LoggingTest {
     }
 
     private static void writeHelp() {
-        System.out.println("usage: java -jar loggenerator.jar [-t <throughputMsgPerSec>] [-e <errorsPercentage>] " +
+        System.out.println("usage: java [-Dlog4j.configurationFile=pathTo/log4j2.xml] -jar loggenerator.jar [-t <throughputMsgPerSec>] [-e <errorsPercentage>] " +
                 "[-w <warningsPercentage>] [-c <logsCountPerThread>] [-p <threadsCount>]");
     }
 
