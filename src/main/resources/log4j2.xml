@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{ISO8601} ${hostName}:%X{loginId} %-5p %-8marker  [%t]: %c{1.}:%M:%L %m %n"/>
+        </Console>
+        <File name="MyFile" fileName="logs/app.log">
+            <PatternLayout>
+                <Pattern>%d{ISO8601};${hostName};%X{loginId};%p;%marker;%t;%c{1.};%M:%L;%m;%n</Pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="trace">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="MyFile"/>
+        </Root>
+    </Loggers>
+</Configuration>
