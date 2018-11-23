@@ -2,26 +2,35 @@ package org.teamlogging.log4j2test;
 
 import org.apache.logging.log4j.*;
 
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 public class LoggingTest {
 
     private static final Logger logger = LogManager.getLogger(LoggingTest.class);
 
-    private static final int THREADS_COUNT = 8;
+    private static final int THREADS_COUNT = 4;
 
     private static final int ITERATIONS_COUNT = 100_000;
 
     public static void main(String[] args) {
-        ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 8, 0L, TimeUnit.MINUTES, new SynchronousQueue());
 
-        for (int i = 0; i < THREADS_COUNT; i++) {
-            LoggingThread loggingThread = new LoggingThread(ITERATIONS_COUNT, "ThreadName_" + i, "login_" + i);
+        List<Logger> loggers = Util.generateLoggers();
+        List<String> loginIds = Util.generateLoginIds();
+        List<Marker> markers = Util.generateMarkers();
 
-            executor.execute(loggingThread);
-        }
+        LogGenerator logGenerator = new LogGenerator(loggers, loginIds, markers);
+
+        logGenerator.setLogsCount(100);
+
+        logGenerator.generate();
+
+//        ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 4, 0L, TimeUnit.MINUTES, new SynchronousQueue());
+//
+//        for (int i = 0; i < THREADS_COUNT; i++) {
+//            LoggingThread loggingThread = new LoggingThread(ITERATIONS_COUNT, "ThreadName_" + i, "login_" + i);
+//
+//            executor.execute(loggingThread);
+//        }
     }
 
     private static final void generateErrorLevel0() {

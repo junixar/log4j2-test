@@ -6,14 +6,18 @@
         </Console>
         <File name="MyFile" fileName="logs/app.log">
             <PatternLayout>
-                <Pattern>%d{ISO8601};${hostName};%X{loginId};%p;%marker;%t;%c{1.};%M:%L;%m;%n</Pattern>
+                <Pattern>%d{ISO8601};${hostName};%X{loginId};%p;%marker;%t;%c{1.};;%m;%n</Pattern>
             </PatternLayout>
         </File>
+        <!--<Socket name="Socket" host="ec2-18-194-249-28.eu-central-1.compute.amazonaws.com" port="12345">-->
+            <!--<JsonLayout compact="true" eventEol="true" properties="true" />-->
+        <!--</Socket>-->
     </Appenders>
     <Loggers>
         <Root level="trace">
             <!--<AppenderRef ref="Console"/>-->
             <AppenderRef ref="MyFile"/>
+            <!--<AppenderRef ref="Socket"/>-->
         </Root>
     </Loggers>
 </Configuration>

@@ -6,11 +6,11 @@ import java.util.Date;
 
 public class LoggingThread implements Runnable {
 
+    private static final Logger logger = LogManager.getLogger(LoggingThread.class);
+
     private static final Marker BUSINESS_MARKER = MarkerManager.getMarker("BUSINESS_LOGIC");
 
     private static final int SAMPLES_COUNT = 15;
-
-    private static final Logger logger = LogManager.getLogger(LoggingThread.class);
 
     private int iterations;
 
