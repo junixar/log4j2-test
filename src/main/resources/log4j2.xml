@@ -2,7 +2,7 @@
 <Configuration status="WARN">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{ISO8601} ${hostName}:%X{loginId} %-5p %-8marker  [%t]: %c{1.}:%M:%L %m %n"/>
+            <PatternLayout pattern="%d{ISO8601} ${hostName}:%X{loginId} %-5p %-8marker  [%t]: %c{1.} %m %n"/>
         </Console>
         <File name="MyFile" fileName="logs/app.log">
             <PatternLayout>
@@ -19,5 +19,8 @@
             <AppenderRef ref="MyFile"/>
             <!--<AppenderRef ref="Socket"/>-->
         </Root>
+        <Logger name="org.teamlogging" level="trace" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
     </Loggers>
 </Configuration>

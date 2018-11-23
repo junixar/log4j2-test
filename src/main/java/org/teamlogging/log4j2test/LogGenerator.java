@@ -9,35 +9,36 @@ public class LogGenerator {
 
     private static final Logger logger = LogManager.getLogger(LogGenerator.class);
 
-    private static final Marker BUSINESS_MARKER = MarkerManager.getMarker("BUSINESS_LOGIC");
+    private final int throughputLogsPerSec;
 
-    private int throughputLogsPerSec = -1;
+    private final float errorsPercentage;
 
-    private float errorsPercentage = 1f;
+    private final float warningsPercentage;
 
-    private float warningsPercentage = 5f;
+    private final int logsCount;
 
-    private int logsCount = 100_000;
+    private final List<Logger> loggers;
 
-    private String loginId = "defaultLoginId";
+    private final List<String> loginIds;
 
-    private List<Logger> loggers;
+    private final List<Marker> markers;
 
-    private List<String> loginIds;
-
-    private List<Marker> markers;
-
-    public LogGenerator(List<Logger> loggers, List<String> loginIds, List<Marker> markers) {
+    public LogGenerator(int throughputLogsPerSec, float errorsPercentage, float warningsPercentage, int logsCount,
+                        List<Logger> loggers, List<String> loginIds, List<Marker> markers) {
+        this.throughputLogsPerSec = throughputLogsPerSec;
+        this.errorsPercentage = errorsPercentage;
+        this.warningsPercentage = warningsPercentage;
+        this.logsCount = logsCount;
         this.loggers = loggers;
         this.loginIds = loginIds;
         this.markers = markers;
     }
 
     public void generate() {
-        Random randomForPercent = new Random();
-        Random randomForLogger = new Random();
-        Random randomForLoginId = new Random();
-        Random randomForMarker = new Random();
+        final Random randomForPercent = new Random();
+        final Random randomForLogger = new Random();
+        final Random randomForLoginId = new Random();
+        final Random randomForMarker = new Random();
         for (int i = 0; i < logsCount; i++) {
             final float randomPercent = randomForPercent.nextFloat() * 100f;
 
@@ -70,23 +71,4 @@ public class LogGenerator {
         ThreadContext.clearAll();
     }
 
-    public void setThroughputLogsPerSec(int throughputLogsPerSec) {
-        this.throughputLogsPerSec = throughputLogsPerSec;
-    }
-
-    public void setErrorsPercentage(float errorsPercentage) {
-        this.errorsPercentage = errorsPercentage;
-    }
-
-    public void setWarningsPercentage(float warningsPercentage) {
-        this.warningsPercentage = warningsPercentage;
-    }
-
-    public void setLogsCount(int logsCount) {
-        this.logsCount = logsCount;
-    }
-
-    public void setLoginId(String loginId) {
-        this.loginId = loginId;
-    }
 }
