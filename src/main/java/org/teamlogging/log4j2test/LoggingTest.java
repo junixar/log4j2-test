@@ -2,7 +2,10 @@ package org.teamlogging.log4j2test;
 
 import org.apache.logging.log4j.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LoggingTest {
 
@@ -27,12 +30,30 @@ public class LoggingTest {
 
         logger.info("Start log generating in {} threads, {} log messages per thread", threadsCount, logsCount);
 
+        final ExecutorService executorService = new ThreadPoolExecutor(0, threadsCount, 0, TimeUnit.SECONDS, new ArrayBlockingQueue(threadsCount));
+
+        List<Future> futures = new ArrayList<>();
+
         for (int threadIndex = 0; threadIndex < threadsCount; threadIndex++) {
             LogGenerator logGenerator = new LogGenerator(throughputLogsPerSec, errorsPercentage, warningsPercentage, logsCount, loggers, loginIds, markers);
-            new Thread(logGenerator::generate, "Executor-" + threadIndex).start();
+            futures.add(executorService.submit(logGenerator::generate));
         }
 
-        logger.info("Log generating finished. {} log messages has been generated.", threadsCount * logsCount);
+        AtomicInteger finishedThreadsCount = new AtomicInteger(0);
+        while (finishedThreadsCount.get()!= threadsCount) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                logger.error("Error on Thread.sleep", ex);
+            }
+            futures.forEach(future -> checkFinischedTask(future, finishedThreadsCount));
+        }
+
+        logger.info("Log generating finished.");
+    }
+
+    private static void checkFinischedTask(Future future, AtomicInteger finishedThreadsCount) {
+        if (future.isDone()) finishedThreadsCount.incrementAndGet();
     }
 
     private static void parseArgs(String[] args) {
