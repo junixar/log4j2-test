@@ -30,30 +30,22 @@ public class LoggingTest {
 
         logger.info("Start log generating in {} threads, {} log messages per thread", threadsCount, logsCount);
 
-        final ExecutorService executorService = new ThreadPoolExecutor(0, threadsCount, 0, TimeUnit.SECONDS, new ArrayBlockingQueue(threadsCount));
-
-        List<Future> futures = new ArrayList<>();
+        final ThreadPoolExecutor executorService = new ThreadPoolExecutor(0, threadsCount, 0, TimeUnit.SECONDS, new ArrayBlockingQueue(threadsCount));
 
         for (int threadIndex = 0; threadIndex < threadsCount; threadIndex++) {
             LogGenerator logGenerator = new LogGenerator(throughputLogsPerSec, errorsPercentage, warningsPercentage, logsCount, loggers, loginIds, markers);
-            futures.add(executorService.submit(logGenerator::generate));
+            executorService.submit(logGenerator::generate);
         }
 
-        AtomicInteger finishedThreadsCount = new AtomicInteger(0);
-        while (finishedThreadsCount.get()!= threadsCount) {
+        while (executorService.getCompletedTaskCount()!= threadsCount) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
                 logger.error("Error on Thread.sleep", ex);
             }
-            futures.forEach(future -> checkFinischedTask(future, finishedThreadsCount));
         }
 
         logger.info("Log generating finished.");
-    }
-
-    private static void checkFinischedTask(Future future, AtomicInteger finishedThreadsCount) {
-        if (future.isDone()) finishedThreadsCount.incrementAndGet();
     }
 
     private static void parseArgs(String[] args) {
